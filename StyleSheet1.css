@@ -1,0 +1,24 @@
+﻿body {
+           
+}
+#welcome {
+    text-align:center;
+}
+#mess {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+img {
+    vertical-align: middle;
+}
+img.customicon {
+    height: 25px;
+    width: 25px;
+}
+div#accordion {
+    width:500px;
+}
+a {
+    color:#0094ff;
+}

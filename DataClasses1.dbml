@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="troylshields3" Class="DataClasses1DataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="WebSettings" ConnectionString="Data Source=troylshields3.db.10021657.hostedresource.com;Initial Catalog=troylshields3;Persist Security Info=True;User ID=troylshields3;MultipleActiveResultSets=True;Application Name=EntityFramework" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="troylshields3ConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Maze_Race" Member="Maze_Races">
+    <Type Name="Maze_Race">
+      <Column Name="Race_ID" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Maze_Time" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="Maze_Name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Maze_OS" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Maze_Computer" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Maze_Mouse" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Maze_MaxLevel" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="Maze_HashGroup" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+    </Type>
+  </Table>
+</Database>

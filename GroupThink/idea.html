@@ -1,0 +1,275 @@
+<html>
+    <head>
+    <link rel="stylesheet" href='http://yui.yahooapis.com/3.10.0/build/cssbutton/cssbutton.css'/>
+    <script src="http://yui.yahooapis.com/3.10.0/build/yui/yui-min.js"></script>
+
+    <style>
+        html{
+            background-color: #000;
+        }
+        .divs {
+            background-color: #D4D8EB;
+            text-align: center;
+            border: 1px solid #9EA8C6;
+            border-radius: 3px 3px 3px 3px;
+            box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.25);
+            width: 25em;
+            margin-top: 0.3em;
+        }
+        .membersOnly{}
+
+    </style>
+
+    <script type="text/javascript">
+    YUI().use('io-base', 'node', 'io', 'event', 'json-parse', 'json-stringify',
+        'cookie', 'selector-css3', 'querystring-parse-simple', 'datatable',
+
+        function(Y) {
+            var readRandomURL = 'http://www.troylelandshields.me/ideamachine/IdeaMachineAPI.svc/readRandomIdea';
+            var readIdea = 'http://www.troylelandshields.me/ideamachine/IdeaMachineAPI.svc/readIdea';
+            var loadCommentsURL = 'http://www.troylelandshields.me/ideamachine/IdeaMachineAPI.svc/findRemarksByIdea';
+            var submitCommentURL = 'http://www.troylelandshields.me/ideamachine/IdeaMachineAPI.svc/insertRemark';
+            var logoutBtn = Y.one('#logout');
+            var submitBtn = Y.one('#submitComment');
+            var title = Y.one('#title');
+            var ideaText = Y.one('#ideaText');
+            var ideaAuthor = Y.one('#ideaAuthor');
+            var ideaScore = Y.one('#ideaScore');
+            var ideaClaimer = Y.one('#ideaClaimer');
+            var data;
+            
+            var user;
+            var idea_id;
+            
+            var tempData = '{'+
+                        '"readRandomIdeaResult": {'+
+                            '"ClaimerUserName": null,'+
+                            '"HasRated": 0,'+
+                            '"Idea": {'+
+                                '"author": "troy.leland.shields@gmail.com",'+
+                                '"claimer": null,'+
+                                '"created_at": null,'+
+                                '"guid": "977d051e-48c9-4267-861e-1c7b62e8d723",'+
+                                '"inappropriate": 0,'+
+                                '"name": "Date Machine",'+
+                                '"score": 50,'+
+                                '"text": "Create an app for people that have a hard time coming up with good date ideas. They will tell the app how much money they want to spend, how far the date can be, how long the date should be, how many people, etc. and the date will return a planned out date based on activities supplied by users. ",'+
+                                '"up_for_grabs": 1'+
+                            '},'+
+                            '"Status": {'+
+                                '"Message": "Sequence contains no elements",'+
+                                '"Stat": "error"'+
+                            '},'+
+                            '"User": {'+
+                                '"created_at": "3\/7\/2013 12:07:14 PM",'+
+                                '"email": "troy.leland.shields@gmail.com",'+
+                                '"maxclaims": 5,'+
+                                '"message": 1,'+
+                                '"password": "08922B86093677CE2A4C3D4CD061DC7F1D483DA5",'+
+                                '"score": 64,'+
+                                '"username": "troylshields"'+
+                            '}'+
+                        '}'+
+                    '}';
+                
+            var tempComments = '{"findRemarksByIdeaResult":[{"Remark":{"author":"troy.leland.shields@gmail.com","created_at":null,"guid":"46382ee3-7f8f-4632-ad73-e84428bc49e3","idea_id":"977d051e-48c9-4267-861e-1c7b62e8d723","text":"Oh, I forgot the best part. Local companies can sponsor dates. Their activities will be suggested with a coupon or something, getting more business to their establishment."},"Status":{"Message":"","Stat":"success"},"User":{"created_at":"3\/7\/2013 12:07:14 PM","email":"troy.leland.shields@gmail.com","maxclaims":5,"message":1,"password":"08922B86093677CE2A4C3D4CD061DC7F1D483DA5","score":64,"username":"troylshields"}}]}';
+
+            Y.on("domready", onLoad);
+            Y.one("#submitComment").on("click", submitComment);
+            Y.one("#nextIdea").on("click", nextIdea);
+            //logoutBtn.on("click", logout);
+            
+            function onLoad(){
+                //showIdea(tempData);
+                //showComments(tempComments);         
+                
+                if(Y.Cookie.get("email")){
+                    user = Y.Cookie.get("email");
+                }
+                else{
+                    Y.all(".membersOnly").setStyle("display","none");
+                }
+                
+                var qs = Y.QueryString.parse(window.location.search.replace("?",""));
+               
+                if(qs.idea){
+                    idea_id = qs.idea;
+                    if(Y.Cookie.get(qs.idea)){
+                        data = Y.Cookie.get(qs.idea);
+                        Y.Cookie.remove(qs.idea);
+                        json = Y.JSON.parse(data);
+                        try{
+                            showIdea(json.readRandomIdeaResult);
+                        }
+                        catch(e){
+                            showIdea(json.readIdeaResult);
+                        }
+                        
+                    }
+                    else{
+                        Y.io(readIdea,{
+                            method:'POST',
+                            data:"guid="+idea_id,
+                            on:{
+                                complete: function(id, response){
+                                    var dataString = response.responseText;
+                                    var data = Y.JSON.parse(dataString);
+                                    if(data.readIdeaResult.Status.Stat){
+                                        Y.Cookie.set(data.readIdeaResult.Idea.guid, dataString);
+                                        window.location = "./idea.html?idea="+data.readIdeaResult.Idea.guid;
+                                    }
+                                    else{
+                                        alert("fail");
+                                    }
+                                }
+                            }
+                        })
+                    }
+                }
+                else{
+                    Y.io(readRandomURL,{
+                        method:'POST',
+                        on:{
+                            complete: function(id, response){
+                                var dataString = response.responseText;
+                                var data = Y.JSON.parse(dataString);
+                                if(data.readRandomIdeaResult.Status.Stat){
+                                    Y.Cookie.set(data.readRandomIdeaResult.Idea.guid, dataString);
+                                    window.location = "./idea.html?idea="+data.readRandomIdeaResult.Idea.guid;
+                                }
+                                else{
+                                    alert("fail");
+                                }
+                            }
+                        }
+                    })
+                }
+                
+                loadComments(qs.idea);
+            }
+            
+            function showIdea(data){
+                title.set("innerHTML", data.Idea.name);
+                ideaText.set("innerHTML", data.Idea.text);
+                ideaAuthor.set("innerHTML", "from " + data.User.username);
+                ideaScore.set("innerHTML", data.Idea.score + " out of 100");
+                
+                if(data.Idea.claimer){
+                    ideaClaimer.set("innerHTML", "Claimed by " + data.Idea.claimer);
+                }               
+            }
+            
+            function loadComments(guid){
+                Y.io(loadCommentsURL,{
+                            method:'POST',
+                            data:"idea_id="+guid,
+                            on:{
+                                complete: function(id, response){
+                                    var dataString = response.responseText;
+                                    showComments(dataString);
+                                }
+                            }
+                        })
+            }
+            
+            function showComments(dataString){
+                
+                var json = Y.JSON.parse(dataString).findRemarksByIdeaResult;
+                
+                var arr = [];
+                
+                for (var i = 0; i < json.length; i++) {
+                    var p = json[i];
+                    arr.push({author: p.User.username, text: p.Remark.text});
+                }
+                
+                //data.Push(author="aksdjf")
+                
+                if(json.length > 0){
+                    var table = new Y.DataTable({
+                        columns : ["author", "text"],
+                        data : arr
+                    });
+                    table.render('#comments');
+                }
+            }
+
+            function submitComment(){
+                var guid = Y.guid();
+                var text = Y.one("#newComment").get("value");
+                
+                //Y.one.("#newComment").set("innerHTML", "");
+                
+                Y.io(submitCommentURL,{
+                            method:'POST',
+                            data:"guid="+guid+"&"+
+                                "idea_id="+idea_id+"&"+
+                                "author="+user+"&"+
+                                "text="+text,
+                            on:{
+                                complete: function(id, response){
+                                    loadComments(idea_id);
+                                }
+                            }
+                        })
+            }
+            
+            function nextIdea(){
+                window.location = "./idea.html"
+            }
+
+            /* Output the results to the DIV container */
+            function flush(s) {
+                title.set("innerHTML", s);
+            }
+            
+            Y.one("#logoutBtn").on("click", logout);
+            
+            function logout(){
+                if(Y.Cookie.get("email")){
+                    Y.Cookie.set("email", "");
+                    Y.Cookie.set("user", "");
+                    onLoad();
+                }
+                else{
+                    window.location = "./login.html";
+                }
+            }
+    });
+</script>
+</head>
+
+
+<body class="yui3-skin-night">
+    <form> 
+        <button id="logoutBtn" class="yui3-button membersOnly">Logout</button>
+        <input type=button 
+        class="yui3-button"
+        value="Dashboard"
+        onClick="self.location='http://www.troylelandshields.me/groupthink/dashboard.html'">
+    </form> 
+    
+    <div>
+        <table class="divs">  
+            <tr><td><h2 id="title"></h2></td></tr>
+            <tr><td><h6 id="ideaAuthor"></td></tr>
+            <tr><td id="ideaScore"></td></tr>
+        </table>
+    </div>
+    <div>
+        <table class="divs">  
+            <tr><td id="ideaText"></td></tr>
+            <tr><td id="ideaClaimer"></td></tr>
+        </table>
+        <button id="nextIdea" class="yui3-button" style="width:25em">Next Idea</button>
+    </div>
+    <div class="divs">
+        <textarea id="newComment" class="yui3-textarea membersOnly" rows="5" cols="50"></textarea>
+        <button id="submitComment" class="yui3-button membersOnly">Add my two cents...</button>
+        <br><br>
+        <div id="comments" class="yui3-skin-sam">          
+        </div>
+        <br>
+    </div>
+</body>
+</html>

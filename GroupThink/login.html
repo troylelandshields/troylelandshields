@@ -1,0 +1,121 @@
+
+<html>
+    <head> 
+        <link rel="stylesheet" href='http://yui.yahooapis.com/3.10.0/build/cssbutton/cssbutton.css'/>
+        <script src="http://yui.yahooapis.com/3.10.0/build/yui/yui-min.js"></script>
+
+        <style>
+            html {
+                background-color: #000;
+            }
+            .divs {
+                background-color: #D4D8EB;
+                text-align: center;
+                border: 1px solid #9EA8C6;
+                border-radius: 3px 3px 3px 3px;
+                box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.25);
+                width: 15em;
+                margin-top: 0.3em;   
+            }
+        </style>
+        
+        <script type="text/javascript">
+        YUI().use('io-base', 'node', 'io', 'event', 'json-parse', 'json-stringify', 'cookie',
+
+            function(Y) {
+                var loginURL = 'http://www.troylelandshields.me/ideamachine/IdeaMachineAPI.svc/LoginPost';
+                var loginBtn = Y.one('#login');
+                var form = Y.one('#loginForm');
+                var messages = Y.one('#directions');
+
+                loginBtn.on('click', login);
+
+                var handleSuccess = function(ioId, o)
+                {
+                    loginComplete(o.responseText);
+                }
+
+                var handleFailure = function(ioId, o)
+                {
+                    var tempData = '{'+
+                            '"LoginPostResult": {'+
+                                '"PassInput": "08922B86093677CE2A4C3D4CD061DC7F1D483DA5",'+
+                                '"Status": {' +
+                                    '"Message": "User successfully found.",'+
+                                    '"Stat": "success"'+
+                                '},'+
+                                '"User": {'+
+                                    '"created_at": "3\/7\/2013 12:07:14 PM",'+
+                                    '"email": "troy.leland.shields@gmail.com",'+
+                                    '"maxclaims": 5,'+
+                                    '"message": 1,'+
+                                    '"password": "08922B86093677CE2A4C3D4CD061DC7F1D483DA5",'+
+                                    '"score": 64,'+
+                                    '"username": "troylshields"'+
+                                '},'+
+                                '"UserInput": "troy.leland.shields@gmail.com"'+
+                            '}'+
+                        '}';
+                    //loginComplete(tempData);
+                    alert("Failure.");
+                }
+
+                Y.on('io:success', handleSuccess);
+                Y.on('io:failure', handleFailure);
+
+                function login(){
+                    Y.io(loginURL,{
+                        method:'POST',
+                        form:{
+                            id: form
+                        },
+                        on:{
+                            complete: function(id, response){
+                            }
+                        }
+                    })
+
+                }
+
+                function loginComplete(responseText){
+                    try{
+                        var data = Y.JSON.parse(responseText);
+                        var status = data.LoginPostResult.Status.Stat;
+                        if(status === "success"){
+                            Y.Cookie.set("user", data.LoginPostResult.User.username);
+                            Y.Cookie.set("email", data.LoginPostResult.User.email);
+                            window.location = "./dashboard.html";
+                        }
+                        else{
+                            flush("Failed.");
+                        }
+                    }
+                    catch(e){
+                        flush("Invalid data.");
+                    }
+                }
+
+                /* Output the results to the DIV container */
+                function flush(s) {
+                    messages.set("innerHTML", s);
+                }
+        });
+        </script>
+    </head>
+    
+    <body class="yui3-skin-night">
+
+        <div id="directions" class="divs"><p>Log in using your email and password.</p></div>
+        <div id="login_div">
+            <form id="loginForm" action="http://www.troylelandshields.me/ideamachine/IdeaMachineAPI.svc/LoginPost" method="POST">
+            <table class="divs">  
+                    <tr><td>Email:</td><td><input id="email" type="text" name="email" value="troy.leland.shields@gmail.com"/></td></tr>
+                    <tr><td>Password:</td><td><input id="password" type="password" name="password" value="snoopy10015"/></td></tr>
+                    <tr><td/><td></td><td/></tr>
+            </table>
+            </form>
+            <button id="login" class="yui3-button">Login</button>
+        </div>
+
+    </body>
+</html>

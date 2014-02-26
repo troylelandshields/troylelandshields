@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="IdeaMachine" Class="TagIdeaDSODataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="WebSettings" ConnectionString="Data Source=IdeaMachine.db.10021657.hostedresource.com;Initial Catalog=IdeaMachine;Persist Security Info=True;User ID=IdeaMachine" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="IdeaMachineConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.tag_idea" Member="tag_ideas">
+    <Type Name="tag_idea">
+      <Column Name="guid" Type="System.String" DbType="VarChar(255) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="idea_id" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="tag_id" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="rating" Type="System.Int32" DbType="Int" CanBeNull="true" />
+    </Type>
+  </Table>
+</Database>

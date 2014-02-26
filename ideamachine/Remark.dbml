@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="IdeaMachine" Class="RemarkDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="WebSettings" ConnectionString="Data Source=IdeaMachine.db.10021657.hostedresource.com;Initial Catalog=IdeaMachine;Persist Security Info=True;User ID=IdeaMachine" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="IdeaMachineConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.remark" Member="remarks">
+    <Type Name="remark">
+      <Column Name="guid" Type="System.String" DbType="VarChar(255) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="text" Type="System.String" DbType="VarChar(500)" CanBeNull="true" />
+      <Column Name="author" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="idea_id" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="created_at" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+    </Type>
+  </Table>
+</Database>

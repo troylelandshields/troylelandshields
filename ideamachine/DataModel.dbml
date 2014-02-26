@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="IdeaMachine" EntityNamespace="DataModel" ContextNamespace="DataModel" Class="DataModelDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="WebSettings" ConnectionString="Data Source=IdeaMachine.db.10021657.hostedresource.com;Initial Catalog=IdeaMachine;Persist Security Info=True;User ID=IdeaMachine" SettingsObjectName="System.Configuration.ConfigurationManager.ConnectionStrings" SettingsPropertyName="IdeaMachineConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.tag" Member="tags">
+    <Type Name="tag">
+      <Column Name="guid" Type="System.String" DbType="VarChar(255) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="tag" Member="tag1" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="tag_tag_idea" Member="tag_ideas" ThisKey="guid" OtherKey="tag_id" Type="tag_idea" />
+    </Type>
+  </Table>
+  <Table Name="dbo.tag_idea" Member="tag_ideas">
+    <Type Name="tag_idea">
+      <Column Name="guid" Type="System.String" DbType="VarChar(255) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="idea_id" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="tag_id" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="rating" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="tag_tag_idea" Member="tag" ThisKey="tag_id" OtherKey="guid" Type="tag" IsForeignKey="true" />
+      <Association Name="idea_tag_idea" Member="idea" ThisKey="idea_id" OtherKey="guid" Type="idea" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.remark" Member="remarks">
+    <Type Name="remark">
+      <Column Name="guid" Type="System.String" DbType="VarChar(255) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="text" Type="System.String" DbType="VarChar(500)" CanBeNull="true" />
+      <Column Name="author" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="idea_id" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="created_at" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Association Name="idea_remark" Member="idea" ThisKey="idea_id" OtherKey="guid" Type="idea" IsForeignKey="true" />
+      <Association Name="user_remark" Member="user" ThisKey="author" OtherKey="email" Type="user" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.idea" Member="ideas">
+    <Type Name="idea">
+      <Column Name="guid" Type="System.String" DbType="VarChar(255) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="name" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="text" Type="System.String" DbType="VarChar(500)" CanBeNull="true" />
+      <Column Name="score" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="author" Type="System.String" DbType="VarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="up_for_grabs" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="claimer" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="created_at" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="inappropriate" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="idea_tag_idea" Member="tag_ideas" ThisKey="guid" OtherKey="idea_id" Type="tag_idea" />
+      <Association Name="idea_remark" Member="remarks" ThisKey="guid" OtherKey="idea_id" Type="remark" />
+      <Association Name="idea_user_idea" Member="user_ideas" ThisKey="guid" OtherKey="idea_id" Type="user_idea" />
+      <Association Name="user_idea" Member="user" ThisKey="author" OtherKey="email" Type="user" IsForeignKey="true" />
+      <Association Name="user_idea1" Member="user1" ThisKey="claimer" OtherKey="email" Type="user" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.user_idea" Member="user_ideas">
+    <Type Name="user_idea">
+      <Column Name="guid" Type="System.String" DbType="VarChar(255) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="idea_id" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="user_id" Type="System.String" DbType="VarChar(255)" CanBeNull="true" />
+      <Column Name="rating" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="claimed" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="favorited" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="idea_user_idea" Member="idea" ThisKey="idea_id" OtherKey="guid" Type="idea" IsForeignKey="true" />
+      <Association Name="user_user_idea" Member="user" ThisKey="user_id" OtherKey="email" Type="user" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.users" Member="users">
+    <Type Name="user">
+      <Column Name="email" Type="System.String" DbType="VarChar(255) NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="password" Type="System.String" DbType="VarChar(50) NOT NULL" CanBeNull="false" />
+      <Column Name="username" Type="System.String" DbType="VarChar(20) NOT NULL" CanBeNull="false" />
+      <Column Name="created_at" Type="System.String" DbType="VarChar(50)" CanBeNull="true" />
+      <Column Name="score" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="maxclaims" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Column Name="message" Type="System.Int32" DbType="Int" CanBeNull="true" />
+      <Association Name="user_remark" Member="remarks" ThisKey="email" OtherKey="author" Type="remark" />
+      <Association Name="user_idea" Member="ideas" ThisKey="email" OtherKey="author" Type="idea" />
+      <Association Name="user_idea1" Member="ideas1" ThisKey="email" OtherKey="claimer" Type="idea" />
+      <Association Name="user_user_idea" Member="user_ideas" ThisKey="email" OtherKey="user_id" Type="user_idea" />
+    </Type>
+  </Table>
+</Database>

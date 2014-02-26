@@ -1,0 +1,95 @@
+<html>
+    <head>
+    <link rel="stylesheet" href='http://yui.yahooapis.com/3.10.0/build/cssbutton/cssbutton.css'/>
+    <script src="http://yui.yahooapis.com/3.10.0/build/yui/yui-min.js"></script>
+
+    <style>
+        html{
+            background-color: #000;
+        }
+        .divs {
+            background-color: #D4D8EB;
+            text-align: center;
+            border: 1px solid #9EA8C6;
+            border-radius: 3px 3px 3px 3px;
+            box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.25);
+            width: 15em;
+            margin-top: 0.3em;
+        }
+        .membersOnly{}
+
+    </style>
+
+    <script type="text/javascript">
+    YUI().use('io-base', 'node', 'io', 'event', 'json-parse', 'json-stringify', 'cookie', 'selector-css3', 'node-visibility',
+
+        function(Y) {
+            var readRandomURL = 'http://www.troylelandshields.me/ideamachine/IdeaMachineAPI.svc/readRandomIdea';
+            var button = Y.one('#logout');
+            var messages = Y.one('#directions');
+
+            Y.on("domready", onLoad);
+            button.on("click", logout);
+            Y.one('#read').on("click", readIdea);
+            
+            function onLoad(){
+                if(Y.Cookie.get("email")){
+                    flush("Welcome, " + Y.Cookie.get("user"));
+                }
+                else{
+                    Y.all(".membersOnly").setStyle("display","none");
+                    button.set("innerHTML", "Login");
+                    flush("Welcome! Login or sign up!");
+                }
+            }
+            
+            function readIdea(){
+                 Y.io(readRandomURL,{
+                        method:'POST',
+                        on:{
+                            complete: function(id, response){
+                                var dataString = response.responseText;
+                                var data = Y.JSON.parse(dataString);
+                                if(data.readRandomIdeaResult.Status.Stat){
+                                    Y.Cookie.set(data.readRandomIdeaResult.Idea.guid, dataString);
+                                    window.location = "./idea.html?idea="+data.readRandomIdeaResult.Idea.guid;
+                                }
+                                else{
+                                    alert("fail");
+                                }
+                            }
+                        }
+                    })
+            }
+            
+            function logout(){
+                if(Y.Cookie.get("email")){
+                    Y.Cookie.set("email", "");
+                    Y.Cookie.set("user", "");
+                    onLoad();
+                }
+                else{
+                    window.location = "./login.html";
+                }
+            }
+
+            /* Output the results to the DIV container */
+            function flush(s) {
+                messages.set("innerHTML", s);
+            }
+    });
+</script>
+</head>
+
+
+<body class="yui3-skin-night">
+    <div id="directions" class="divs"><p></p></div>
+    <div>
+        <table class="divs">  
+            <tr><td><button id="submit" class="yui3-button membersOnly">Submit</button></td></tr>
+            <tr><td><button id="read" class="yui3-button">Consume</button></td></tr>
+            <tr><td><button id="logout" class="yui3-button">Logout</button></td></tr>
+        </table>
+    </div>
+</body>
+</html>
